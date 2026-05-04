@@ -1,0 +1,17 @@
+{
+    "basundi": {"calories": 350, "allergens": ["Dairy", "Nuts"], "macros": {"carbs": 45, "fat": 15, "protein": 9}},
+    "cham_cham": {"calories": 280, "allergens": ["Dairy"], "macros": {"carbs": 55, "fat": 4, "protein": 6}},
+    "gajar_ka_halwa": {"calories": 320, "allergens": ["Dairy", "Nuts"], "macros": {"carbs": 40, "fat": 16, "protein": 5}},
+    "ghevar": {"calories": 400, "allergens": ["Dairy", "Gluten", "Nuts"], "macros": {"carbs": 45, "fat": 22, "protein": 5}},
+    "gulab_jamun": {"calories": 300, "allergens": ["Dairy", "Gluten"], "macros": {"carbs": 45, "fat": 10, "protein": 4}},
+    "imarti": {"calories": 250, "allergens": ["Gluten"], "macros": {"carbs": 42, "fat": 8, "protein": 3}},
+    "jalebi": {"calories": 280, "allergens": ["Gluten"], "macros": {"carbs": 50, "fat": 9, "protein": 2}},
+    "kalakand": {"calories": 320, "allergens": ["Dairy"], "macros": {"carbs": 35, "fat": 14, "protein": 12}},
+    "malapua": {"calories": 310, "allergens": ["Dairy", "Gluten"], "macros": {"carbs": 48, "fat": 12, "protein": 4}},
+    "mysore_pak": {"calories": 450, "allergens": ["Dairy"], "macros": {"carbs": 50, "fat": 26, "protein": 4}},
+    "ras_malai": {"calories": 220, "allergens": ["Dairy", "Nuts"], "macros": {"carbs": 25, "fat": 10, "protein": 7}},
+    "rasgulla": {"calories": 150, "allergens": ["Dairy"], "macros": {"carbs": 30, "fat": 1, "protein": 4}},
+    "sandesh": {"calories": 140, "allergens": ["Dairy"], "macros": {"carbs": 18, "fat": 5, "protein": 6}},
+    "shrikhand": {"calories": 280, "allergens": ["Dairy", "Nuts"], "macros": {"carbs": 40, "fat": 10, "protein": 8}},
+    "sohan_papdi": {"calories": 330, "allergens": ["Dairy", "Gluten", "Nuts"], "macros": {"carbs": 40, "fat": 18, "protein": 4}}
+}
