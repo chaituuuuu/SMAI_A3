@@ -6,42 +6,32 @@ from PIL import Image
 import json
 import google.generativeai as genai
 
-# ==========================================
-# 🔑 PASTE YOUR GEMINI API KEY BELOW
-# ==========================================
-MY_GEMINI_KEY = "AIzaSyAQdNXYBweOhjP_UaKarXup42nDhIWy_VE"
-# ==========================================
+import os
 
-# Set page config for a wider layout
+                                    
 st.set_page_config(page_title="Indian Sweet Recognizer", page_icon="🍬", layout="centered")
 
-# --- GEMINI API SETUP ---
-# --- GEMINI API SETUP ---
+                          
 api_configured = False
+
+                                                                                 
+try:
+    MY_GEMINI_KEY = st.secrets["GEMINI_API_KEY"]
+except (KeyError, FileNotFoundError):
+    MY_GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+
 if MY_GEMINI_KEY and MY_GEMINI_KEY != "PASTE_YOUR_API_KEY_HERE":
     try:
         genai.configure(api_key=MY_GEMINI_KEY)
-        
-        # 1. Ask Google what models you have access to
-        available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        
-        # 2. Pick the best available one automatically
-        if 'models/gemini-1.5-flash' in available_models:
-            model_name = 'gemini-1.5-flash'
-        elif 'models/gemini-1.5-pro' in available_models:
-            model_name = 'gemini-1.5-pro'
-        elif 'models/gemini-pro' in available_models:
-            model_name = 'gemini-pro' # Universal stable fallback
-        else:
-            model_name = available_models[0].replace('models/', '') # Absolute fallback
-            
+                                                                                                                                         
+        model_name = 'gemini-2.5-flash'
         llm_model = genai.GenerativeModel(model_name) 
         api_configured = True
     except Exception as e:
         st.sidebar.error(f"Error configuring Gemini API: {e}")
 else:
     st.sidebar.warning("⚠️ Please paste your Gemini API key at the top of the app.py file to unlock AI recipes.")
-# 1. Load Metadata
+                  
 @st.cache_data
 def load_metadata():
     with open('metadata.json', 'r') as f:
@@ -50,7 +40,7 @@ def load_metadata():
 metadata = load_metadata()
 class_names = sorted(list(metadata.keys()))
 
-# 2. Load PyTorch Model 
+                        
 @st.cache_resource
 def load_pytorch_model():
     model = models.mobilenet_v3_small(weights=None)
@@ -62,7 +52,7 @@ def load_pytorch_model():
 
 model = load_pytorch_model()
 
-# 3. Define Inference Transforms
+                                
 transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
@@ -70,20 +60,20 @@ transform = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-# 4. Build the Streamlit UI
+                           
 st.title("🍬 Indian Sweet Recognizer (T2.3)")
 st.write("Upload a photo of an Indian sweet to analyze its nutritional profile and generate healthy recipe alternatives.")
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Display Image
+                       
     image = Image.open(uploaded_file).convert('RGB')
     st.image(image, caption='Uploaded Image', use_container_width=True)
     
     st.markdown("---")
     
-    # Inference
+                   
     img_t = transform(image).unsqueeze(0)
     with torch.no_grad():
         out = model(img_t)
@@ -93,7 +83,7 @@ if uploaded_file is not None:
         predicted_class = class_names[top_catid.item()]
         confidence = top_prob.item() * 100
         
-    # --- UI Layout: Results ---
+                                    
     formatted_name = predicted_class.replace('_', ' ').title()
     st.subheader(f"Prediction: {formatted_name}")
     st.caption(f"Network Confidence: {confidence:.2f}%")
@@ -101,8 +91,8 @@ if uploaded_file is not None:
     item_data = metadata[predicted_class]
     calories = item_data['calories']
     
-    # --- Feature 1: Macro Breakdown ---
-    st.write("### Nutritional Breakdown (Per Serving)")
+                                            
+    st.write("### Nutritional Breakdown (Per 100g Serving)")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -114,9 +104,9 @@ if uploaded_file is not None:
     with col4:
         st.metric(label="Protein", value=f"{item_data['macros']['protein']}g")
 
-    st.write("") # Spacing
+    st.write("")           
     
-    # --- Feature 2: Allergens ---
+                                      
     st.write("**Allergens Detected:**")
     badges_html = ""
     for allergen in item_data['allergens']:
@@ -134,10 +124,10 @@ if uploaded_file is not None:
         
     st.markdown("---")
     st.write("### 🏸 Activity Equivalent")
-    # Competitive badminton burns roughly 8.5 kcal per minute for an average adult
+                                                                                      
     badminton_mins = int(calories / 8.5)
     st.info(f"**Burn it off:** You would need to play **{badminton_mins} minutes** of competitive badminton to burn off one serving of {formatted_name}.")
-    # --- Feature 3: LLM Recipe Generation ---
+                                                  
     st.write("### 🧑‍🍳 Healthy Recipe Generator")
     st.write("Want to enjoy this sweet without the sugar crash? Ask our AI Chef for a diabetic-friendly alternative.")
     
@@ -145,7 +135,7 @@ if uploaded_file is not None:
         if st.button(f"Generate Low-Sugar {formatted_name} Recipe"):
             with st.spinner(f"Chef Gemini is crafting a healthy {formatted_name} recipe..."):
                 try:
-                    # Constructing the Prompt
+                                                                 
                     prompt = f"""
                     You are an expert nutritionist and traditional Indian chef. 
                     The user wants to eat a traditional Indian sweet called '{formatted_name}'.
@@ -158,10 +148,10 @@ if uploaded_file is not None:
                     Keep it authentic but healthy!
                     """
                     
-                    # Call the Gemini API
+                                                             
                     response = llm_model.generate_content(prompt)
                     
-                    # Display the text output in a nice container
+                                                                                     
                     with st.expander("✨ Your AI-Generated Recipe ✨", expanded=True):
                         st.markdown(response.text)
                         
